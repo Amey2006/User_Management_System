@@ -4,13 +4,23 @@ from database import get_db
 from models.user import User 
 from schemas.user import UserResponse,UserUpdate
 from core.security import hash_password
-
+# from routes.auth import get_current_user
 router = APIRouter(
     prefix="/users",
     tags=["Users"]
 )
 
+from routes.auth import get_current_user
 
+@router.get("/profile")
+def get_profile(
+    current_user: str = Depends(get_current_user)
+):
+
+    return {
+        "message": "Protected route",
+        "user": current_user
+    }
     
 @router.get("/view_users",response_model=list[UserResponse])
 def view_user(db:Session=Depends(get_db)):
@@ -36,6 +46,7 @@ def remove_user(id:int,db:Session=Depends(get_db)):
         "msg":"User Deleted Successfully...."
     }
 
+    
 @router.put("/{id}",response_model=UserResponse)
 def update_user(id:int,user:UserUpdate,db:Session=Depends(get_db)):
     db_user=db.query(User).filter(User.id==id).first()
@@ -48,6 +59,5 @@ def update_user(id:int,user:UserUpdate,db:Session=Depends(get_db)):
     return db_user
     
 
-    
 
     
