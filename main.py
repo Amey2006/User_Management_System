@@ -33,6 +33,9 @@ def hello():
 # pyrefly: ignore [missing-import]
 from fastapi import File, UploadFile
 import shutil
+import os
+
+os.makedirs("uploads", exist_ok=True)
 @app.post("/upload")
 async def upload_file(file: UploadFile = File(...)):
     with open(f"uploads/{file.filename}", "wb") as buffer:
